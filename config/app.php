@@ -155,7 +155,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\HelpersServiceProvider::class,
-        Collective\Html\HtmlServiceProvider::class,
+        App\Providers\HtmlServiceProvider::class,
 
         /*
          * Third Party Service Providers...
