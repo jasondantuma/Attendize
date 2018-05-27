@@ -124,7 +124,7 @@
 <!--/Main Content-->
 
 <!--JS-->
-<script src="{{ asset('assets/javascript/backend.js') }}"></script>
+{!! HTML::script('assets/javascript/backend.js') !!}
 <script>
     $(function () {
         $.ajaxSetup({
