@@ -23,11 +23,11 @@
    <!--/Meta-->
 
     <!--JS-->
-    {!! HTML::script(config('attendize.cdn_url_static_assets').'/vendor/jquery/dist/jquery.min.js') !!}
+    <script src="{{ asset('/vendor/jquery/dist/jquery.min.js') }}"></script>
     <!--/JS-->
 
     <!--Style-->
-    {!! HTML::style(config('attendize.cdn_url_static_assets').'/assets/stylesheet/application.css') !!}
+    <link media="all" type="text/css" rel="stylesheet" href="{{ asset('/assets/stylesheet/application.css') }}">
     <!--/Style-->
 
     @yield('head')
