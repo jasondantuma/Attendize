@@ -23,11 +23,11 @@
    <!--/Meta-->
 
     <!--JS-->
-    <script src="{{ secure_asset('/vendor/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ asset('/vendor/jquery/dist/jquery.min.js') }}"></script>
     <!--/JS-->
 
     <!--Style-->
-    <link media="all" type="text/css" rel="stylesheet" href="{{ secure_asset('/assets/stylesheet/application.css') }}">
+    <link media="all" type="text/css" rel="stylesheet" href="{{ asset('/assets/stylesheet/application.css') }}">
     <!--/Style-->
 
     @yield('head')
@@ -38,7 +38,7 @@
 
     <div class="navbar-header">
         <a class="navbar-brand" href="javascript:void(0);">
-            <img style="width: 150px;" class="logo" alt="Attendize" src="{{secure_asset('assets/images/logo-light.png')}}"/>
+            <img style="width: 150px;" class="logo" alt="Attendize" src="{{asset('assets/images/logo-light.png')}}"/>
         </a>
     </div>
 
@@ -124,7 +124,7 @@
 <!--/Main Content-->
 
 <!--JS-->
-<script src="{{ secure_asset('assets/javascript/backend.js') }}"></script>
+<script src="{{ asset('assets/javascript/backend.js') }}"></script>
 <script>
     $(function () {
         $.ajaxSetup({
