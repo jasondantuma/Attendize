@@ -28,7 +28,7 @@ return [
     'event_bg_images'        => 'assets/images/public/EventPage/backgrounds',
 
     'fallback_organiser_logo_url' => '/assets/images/logo-dark.png',
-    'cdn_url'                     => '',
+    'cdn_url'                     => 'https://localhost:8080',
 
     'checkout_timeout_after' => env('CHECKOUT_TIMEOUT_AFTER', 10), #minutes
 
