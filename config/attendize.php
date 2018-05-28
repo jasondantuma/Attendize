@@ -18,8 +18,8 @@ return [
     'outgoing_email_name'    => env('MAIL_FROM_NAME'),
     'incoming_email'         => env('MAIL_FROM_ADDRESS'),
 
-    'app_name'               => 'Attendize Event Ticketing',
-    'event_default_bg_color' => '#B23333',
+    'app_name'               => env('APP_NAME', 'Attendize Event Ticketing'),
+    'event_default_bg_color' => env('EVENT_DEFAULT_BACKGROUND_COLOR', '#B23333'),
     'event_default_bg_image' => 'assets/images/public/EventPage/backgrounds/5.jpg',
 
     'event_images_path'      => 'user_content/event_images',
@@ -28,7 +28,7 @@ return [
     'event_bg_images'        => 'assets/images/public/EventPage/backgrounds',
 
     'fallback_organiser_logo_url' => '/assets/images/logo-dark.png',
-    'cdn_url'                     => 'https://localhost:8080',
+    'cdn_url'                     => '',
 
     'checkout_timeout_after' => env('CHECKOUT_TIMEOUT_AFTER', 10), #minutes
 
@@ -36,8 +36,8 @@ return [
     'ticket_status_on_sale'          => 4,
     'ticket_status_off_sale'         => 5,
 
-    'ticket_booking_fee_fixed'      => 0,
-    'ticket_booking_fee_percentage' => 0,
+    'ticket_booking_fee_fixed'      => env('BOOKING_FEE_FIXED', 0),
+    'ticket_booking_fee_percentage' => env('BOOKING_FEE_PERCENT', 0),
 
     /* Order statuses */
     'order_complete'                => 1,
