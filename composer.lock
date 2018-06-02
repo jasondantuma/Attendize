@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "08e19efa3877e6ebb75350d2501d8211",
+    "content-hash": "8ca5e7b6a3ad3dfbd24c4257bb2c3e99",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -2767,7 +2767,7 @@
         },
         {
             "name": "omnipay/payfast",
-            "version": "dev-master",
+            "version": "v2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/omnipay-payfast.git",
@@ -6051,7 +6051,6 @@
         "vinelab/http": 20,
         "maxhoffmann/parsedown-laravel": 20,
         "omnipay/bitpay": 20,
-        "omnipay/payfast": 20,
         "omnipay/coinbase": 20
     },
     "prefer-stable": false,

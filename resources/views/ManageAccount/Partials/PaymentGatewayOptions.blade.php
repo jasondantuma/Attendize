@@ -151,6 +151,36 @@
 
 </section>
 
+{{--PAYFAST--}}
+<section class="payment_gateway_options"  id="gateway_{{config('attendize.payment_gateway_payfast')}}">
+    <h4>PayFast</h4>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('payfast[merchantKey]', 'Merchant Key', array('class'=>'control-label ')) !!}
+                {!! Form::text('payfast[merchantKey]', $account->getGatewayConfigVal(config('attendize.payment_gateway_payfast'), 'merchantKey'),[ 'class'=>'form-control'])  !!}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('payfast[merchantId]', 'Merchant ID', ['class'=>'control-label ']) !!}
+                {!! Form::text('payfast[merchantId]', $account->getGatewayConfigVal(config('attendize.payment_gateway_payfast'), 'merchantId'),[ 'class'=>'form-control'])  !!}
+            </div>
+        </div>
+    </div>
+    {{--<div class="row">--}}
+        {{--<div class="col-md-12">--}}
+            {{--<div class="form-group">--}}
+                {{--{!! Form::label('payfast[secureHash]', 'PDT Key', array('class'=>'control-label ')) !!}--}}
+                {{--{!! Form::text('payfast[secureHash]', $account->getGatewayConfigVal(config('attendize.payment_gateway_payfast'), 'secureHash'),[ 'class'=>'form-control'])  !!}--}}
+            {{--</div>--}}
+        {{--</div>--}}
+    {{--</div>--}}
+
+
+</section>
+
 
 
 

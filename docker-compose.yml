@@ -46,8 +46,6 @@ services:
       - POSTGRES_DB=attendize
     ports:
       - "5433:5432"
-    volumes:
-      - ./docker/pgdata:/var/lib/postgresql/data
     networks:
     - attendizenet
   maildev:

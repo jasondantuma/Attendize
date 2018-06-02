@@ -269,6 +269,7 @@ class EventCheckoutController extends Controller
     {
 
         /*
+         *
          * If there's no session kill the request and redirect back to the event homepage.
          */
         if (!session()->get('ticket_order_' . $event_id)) {
@@ -297,7 +298,6 @@ class EventCheckoutController extends Controller
                 'messages' => $order->errors(),
             ]);
         }
-
         /*
          * Add the request data to a session in case payment is required off-site
          */
@@ -368,6 +368,28 @@ class EventCheckoutController extends Controller
 
                         // Order description in MIGS is only 34 characters long; so we need a short description
                         $transaction_data['description'] = "Ticket sales " . $transaction_data['transactionId'];
+
+                        break;
+                    case config('attendize.payment_gateway_payfast'):
+                        $transaction_data += [
+                            'm_payment_id' => $event_id . date('YmdHis'),       // TODO: Where to generate transaction id?
+                            'return_url' => route('showEventCheckoutPaymentReturn', [
+                                'event_id'              => $event_id,
+                                'is_payment_successful' => 1
+                            ]),
+                            'cancel_url' => route('showEventCheckoutPaymentReturn', [
+                                'event_id'              => $event_id,
+                                'is_payment_cancelled' => 1
+                            ]),
+                            'notify_url' => route('showEventCheckoutPaymentReturn', [
+                                'event_id'              => $event_id,
+                                'is_payment_successful' => 1
+                            ]),
+
+                        ];
+
+                        // Order description in MIGS is only 34 characters long; so we need a short description
+//                        $transaction_data['description'] = "Ticket sales " . $transaction_data['transactionId'];
 
                         break;
                     default:
