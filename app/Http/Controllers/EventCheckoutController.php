@@ -443,7 +443,7 @@ class EventCheckoutController extends Controller
                     if ($ticket_order['payment_gateway']->id == config('attendize.payment_gateway_payfast')) {
                         // store all session data from cache, since payfast calls order completion from outside of user browser
                         Cache::put(
-                            'orders.ticket_order_' . $transaction_data['m_payment_id'],
+                            'orders.ticket_order_' . $transaction_data['transactionId'],
                             session()->all(),
                             Carbon::now()->addMinutes(30)
                         );
