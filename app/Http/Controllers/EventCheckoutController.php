@@ -326,7 +326,7 @@ class EventCheckoutController extends Controller
                     ]);
 
                 $transaction_data = [
-                        'amount'      => ($ticket_order['order_total'] + $ticket_order['organiser_booking_fee']),
+                        'amount'      => ($ticket_order['order_total'] + $ticket_order['total_booking_fee']),
                         'currency'    => $event->currency->code,
                         'description' => 'Order for customer: ' . $request->get('order_email'),
                     ];
@@ -759,7 +759,7 @@ class EventCheckoutController extends Controller
         }
 
         if ($payfast) {
-            Cache::put('orders::' . $cache_key . '::order_reference', $order->order_reference);
+            Cache::put('orders::' . $cache_key . '::order_reference', $order->order_reference, Carbon::now()->addMinute(60));
             return response('', 200);
         }
 
