@@ -519,7 +519,7 @@ class EventCheckoutController extends Controller
         $ticket_order = session()->get('ticket_order_' . $event_id);
 
         if ($request->has('m_payment_id')) {
-            $ticket_order = Cache::get('orders.ticket_order_' . $request->get('m_payment_id'));
+            $ticket_order = Cache::get('orders.ticket_order_' . $request->get('m_payment_id'))['ticket_order_' . $event_id];
         }
 
         $gateway = Omnipay::create($ticket_order['payment_gateway']->name);
@@ -568,7 +568,7 @@ class EventCheckoutController extends Controller
 
             $order = new Order();
             if (!is_null($cache_key)) {
-                $ticket_order = Cache::get('orders.ticket_order_' . $cache_key); // load all session data from cache
+                $ticket_order = Cache::get('orders.ticket_order_' . $cache_key)['ticket_order_' . $event_id]; // load all session data from cache
             } else {
                 $ticket_order = session()->get('ticket_order_' . $event_id);
             }
