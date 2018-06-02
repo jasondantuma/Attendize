@@ -76,6 +76,6 @@ return [
       |
      */
     'failed' => [
-        'database' => 'mysql', 'table' => 'failed_jobs',
+        'database' => env('DB_TYPE', 'mysql'), 'table' => 'failed_jobs',
     ],
 ];

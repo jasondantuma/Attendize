@@ -37,7 +37,7 @@ var checkinApp = new Vue({
         },
         toggleCheckin: function (attendee) {
 
-            if(this.workingAway) {
+            if (this.workingAway) {
                 return;
             }
             this.workingAway = true;
@@ -112,14 +112,14 @@ var checkinApp = new Vue({
             navigator.mediaDevices.getUserMedia({video: true, audio: false})
                 .then(function (stream) {
 
-                that.stream = stream;
+                    that.stream = stream;
 
-                that.videoElement.srcObject = stream;
-                that.videoElement.onloadedmetadata = function () {
-                    that.videoElement.play();
-                }
+                    that.videoElement.srcObject = stream;
+                    that.videoElement.onloadedmetadata = function () {
+                        that.videoElement.play();
+                    }
 
-            }).catch(function (error) { /* error*/
+                }).catch(function (error) { /* error*/
                 console.error(error);
                 that.closeScanner();
             });
