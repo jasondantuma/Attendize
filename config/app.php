@@ -169,6 +169,7 @@ return [
         Mews\Purifier\PurifierServiceProvider::class,
         MaxHoffmann\Parsedown\ParsedownServiceProvider::class,
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
+        Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
     ],
 
     /*
@@ -231,6 +232,7 @@ return [
         'Purifier'     => Mews\Purifier\Facades\Purifier::class,
         'Markdown'     => MaxHoffmann\Parsedown\ParsedownFacade::class,
         'Omnipay'      => Omnipay\Omnipay::class,
+        'Sentry'       => Sentry\SentryLaravel\SentryFacade::class,
        // 'Omnipay'      => Omnipay\Omnipay::class,
 
     ],
