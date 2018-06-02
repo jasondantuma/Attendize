@@ -501,7 +501,7 @@ class EventCheckoutController extends Controller
 
         if ($request->has('payfast_id')) {
 
-            $order_reference = Cache::get('orders.ticket_order_' . $request->get('payfast_id') . '.order_reference', false);
+            $order_reference = Cache::get('orders::' . $request->get('payfast_id') . '::order_reference', false);
 
             if (!$order_reference) {
                 return response()->redirectToRoute('showEventCheckout', [
@@ -759,7 +759,7 @@ class EventCheckoutController extends Controller
         }
 
         if ($payfast) {
-            Cache::put('orders.ticket_order_' . $cache_key . '.order_reference', $order->order_reference);
+            Cache::put('orders::' . $cache_key . '::order_reference', $order->order_reference);
             return response('', 200);
         }
 
