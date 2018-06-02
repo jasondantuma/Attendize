@@ -375,7 +375,7 @@ class EventCheckoutController extends Controller
                         $payfast_id = str_random(60);
                         session()->put('ticket_order_' . $event_id . '.payfast_id', $payfast_id);
                         $transaction_data += [
-                            'm_payment_id' => $payfast_id,       // TODO: Where to generate transaction id?
+                            'transactionId' => $payfast_id,       // TODO: Where to generate transaction id?
                             'return_url' => route('showEventCheckoutPaymentReturn', [
                                 'event_id'              => $event_id,
                                 'is_payment_successful' => 1,
@@ -517,6 +517,11 @@ class EventCheckoutController extends Controller
         }
 
         $ticket_order = session()->get('ticket_order_' . $event_id);
+
+        if ($request->has('m_payment_id')) {
+            $ticket_order = Cache::get('orders.ticket_order_' . $request->get('m_payment_id'));
+        }
+
         $gateway = Omnipay::create($ticket_order['payment_gateway']->name);
 
         $gateway->initialize($ticket_order['account_payment_gateway']->config + [
