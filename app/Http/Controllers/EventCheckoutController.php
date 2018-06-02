@@ -501,7 +501,7 @@ class EventCheckoutController extends Controller
 
         if ($request->has('payfast_id')) {
 
-            $order_reference = Cache::has('orders.ticket_order_' . $request->get('payfast_id') . '.order_reference', false);
+            $order_reference = Cache::get('orders.ticket_order_' . $request->get('payfast_id') . '.order_reference', false);
 
             if (!$order_reference) {
                 return response()->redirectToRoute('showEventCheckout', [
@@ -567,8 +567,10 @@ class EventCheckoutController extends Controller
         try {
 
             $order = new Order();
+            $payfast = false;
             if (!is_null($cache_key)) {
                 $ticket_order = Cache::get('orders.ticket_order_' . $cache_key)['ticket_order_' . $event_id]; // load all session data from cache
+                $payfast = true;
             } else {
                 $ticket_order = session()->get('ticket_order_' . $event_id);
             }
@@ -756,7 +758,7 @@ class EventCheckoutController extends Controller
             ]);
         }
 
-        if (!is_null($cache_key)) {
+        if ($payfast) {
             Cache::put('orders.ticket_order_' . $cache_key . '.order_reference', $order->order_reference);
             return response('', 200);
         }
