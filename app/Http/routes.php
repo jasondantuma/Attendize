@@ -154,10 +154,14 @@ Route::group(['prefix' => 'e'], function () {
         'uses' => 'EventCheckoutController@showEventCheckoutPaymentReturn',
     ]);
 
-
     Route::post('{event_id}/checkout/create', [
         'as'   => 'postCreateOrder',
         'uses' => 'EventCheckoutController@postCreateOrder',
+    ]);
+
+    Route::post('{event_id}/checkout/payfast', [
+        'as'   => 'postEventCheckoutPayfastNotify',
+        'uses' => 'EventCheckoutController@showEventCheckoutPaymentReturn',
     ]);
 });
 

@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Cookie;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Log;
 use Omnipay;
 use PDF;
@@ -269,7 +270,6 @@ class EventCheckoutController extends Controller
     {
 
         /*
-         *
          * If there's no session kill the request and redirect back to the event homepage.
          */
         if (!session()->get('ticket_order_' . $event_id)) {
@@ -298,6 +298,7 @@ class EventCheckoutController extends Controller
                 'messages' => $order->errors(),
             ]);
         }
+
         /*
          * Add the request data to a session in case payment is required off-site
          */
@@ -371,17 +372,21 @@ class EventCheckoutController extends Controller
 
                         break;
                     case config('attendize.payment_gateway_payfast'):
+                        $payfast_id = str_random(60);
+                        session()->put('ticket_order_' . $event_id . '.payfast_id', $payfast_id);
                         $transaction_data += [
-                            'm_payment_id' => $event_id . date('YmdHis'),       // TODO: Where to generate transaction id?
+                            'm_payment_id' => $payfast_id,       // TODO: Where to generate transaction id?
                             'return_url' => route('showEventCheckoutPaymentReturn', [
                                 'event_id'              => $event_id,
-                                'is_payment_successful' => 1
+                                'is_payment_successful' => 1,
+                                'payfast_id'            => $payfast_id
                             ]),
                             'cancel_url' => route('showEventCheckoutPaymentReturn', [
                                 'event_id'              => $event_id,
-                                'is_payment_cancelled' => 1
+                                'is_payment_cancelled'  => 1,
+                                'payfast_id'            => $payfast_id
                             ]),
-                            'notify_url' => route('showEventCheckoutPaymentReturn', [
+                            'notify_url' => route('postEventCheckoutPayfastNotify', [
                                 'event_id'              => $event_id,
                                 'is_payment_successful' => 1
                             ]),
@@ -419,7 +424,9 @@ class EventCheckoutController extends Controller
                      * As we're going off-site for payment we need to store some data in a session so it's available
                      * when we return
                      */
+
                     session()->push('ticket_order_' . $event_id . '.transaction_data', $transaction_data);
+
 					Log::info("Redirect url: " . $response->getRedirectUrl());
 
                     $return = [
@@ -431,6 +438,15 @@ class EventCheckoutController extends Controller
                     // GET method requests should not have redirectData on the JSON return string
                     if($response->getRedirectMethod() == 'POST') {
                         $return['redirectData'] = $response->getRedirectData();
+                    }
+
+                    if ($ticket_order['payment_gateway']->id == config('attendize.payment_gateway_payfast')) {
+                        // store all session data from cache, since payfast calls order completion from outside of user browser
+                        Cache::set(
+                            'orders.ticket_order_' . $transaction_data['m_payment_id'],
+                            session()->all(),
+                            Carbon::now()->addMinutes(30)
+                        );
                     }
 
                     return response()->json($return);
@@ -483,6 +499,23 @@ class EventCheckoutController extends Controller
             ]);
         }
 
+        if ($request->has('payfast_id')) {
+
+            $order_reference = Cache::has('orders.ticket_order_' . $request->get('payfast_id') . '.order_reference', false);
+
+            if (!$order_reference) {
+                return response()->redirectToRoute('showEventCheckout', [
+                    'event_id'          => $event_id,
+                    'is_payment_failed' => 1,
+                ]);
+            }
+
+            return response()->redirectToRoute('showOrderDetails', [
+                'is_embedded'     => $this->is_embedded,
+                'order_reference' => $order_reference,
+            ]);
+        }
+
         $ticket_order = session()->get('ticket_order_' . $event_id);
         $gateway = Omnipay::create($ticket_order['payment_gateway']->name);
 
@@ -495,8 +528,15 @@ class EventCheckoutController extends Controller
         $response = $transaction->send();
 
         if ($response->isSuccessful()) {
-            session()->push('ticket_order_' . $event_id . '.transaction_id', $response->getTransactionReference());
-            return $this->completeOrder($event_id, false);
+            $cache_key = null;
+
+            if ($request->get('m_payment_id')){
+                $cache_key = $request->get('m_payment_id');
+            } else {
+                session()->push('ticket_order_' . $event_id . '.transaction_id', $response->getTransactionReference());
+            }
+
+            return $this->completeOrder($event_id, false, $cache_key);
         } else {
             session()->flash('message', $response->getMessage());
             return response()->redirectToRoute('showEventCheckout', [
@@ -514,7 +554,7 @@ class EventCheckoutController extends Controller
      * @param bool|true $return_json
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function completeOrder($event_id, $return_json = true)
+    public function completeOrder($event_id, $return_json = true, $cache_key = null)
     {
 
         DB::beginTransaction();
@@ -522,7 +562,11 @@ class EventCheckoutController extends Controller
         try {
 
             $order = new Order();
-            $ticket_order = session()->get('ticket_order_' . $event_id);
+            if (!is_null($cache_key)) {
+                $ticket_order = Cache::get('orders.ticket_order_' . $cache_key); // load all session data from cache
+            } else {
+                $ticket_order = session()->get('ticket_order_' . $event_id);
+            }
             $request_data = $ticket_order['request_data'][0];
             $event = Event::findOrFail($ticket_order['event_id']);
             $attendee_increment = 1;
@@ -667,7 +711,12 @@ class EventCheckoutController extends Controller
             /*
              * Kill the session
              */
-            session()->forget('ticket_order_' . $event->id);
+            if (!is_null($cache_key)) {
+                Cache::forget('orders.ticket_order_' . $cache_key);
+            } else {
+                session()->forget('ticket_order_' . $event->id);
+            }
+
 
             /*
              * Queue up some tasks - Emails to be sent, PDFs etc.
@@ -690,6 +739,8 @@ class EventCheckoutController extends Controller
 
         DB::commit();
 
+
+
         if ($return_json) {
             return response()->json([
                 'status'      => 'success',
@@ -698,6 +749,11 @@ class EventCheckoutController extends Controller
                     'order_reference' => $order->order_reference,
                 ]),
             ]);
+        }
+
+        if (!is_null($cache_key)) {
+            Cache::set('orders.ticket_order_' . $cache_key . '.order_reference', $order->order_reference);
+            return response('', 200);
         }
 
         return response()->redirectToRoute('showOrderDetails', [
