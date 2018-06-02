@@ -9,7 +9,7 @@ class VerifyCsrfToken extends BaseVerifier
 {
     protected $except = [
         'install/*',
-        'e/*/checkout/success'
+        'e/*/checkout/payfast'
     ];
 
     /**
