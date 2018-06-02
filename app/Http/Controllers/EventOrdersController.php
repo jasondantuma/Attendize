@@ -345,8 +345,8 @@ class EventOrdersController extends MyBaseController
                         'orders.email',
                         'orders.order_reference',
                         'orders.amount',
-                        \DB::raw("(CASE WHEN orders.is_refunded = 1 THEN 'YES' ELSE 'NO' END) AS `orders.is_refunded`"),
-                        \DB::raw("(CASE WHEN orders.is_partially_refunded = 1 THEN 'YES' ELSE 'NO' END) AS `orders.is_partially_refunded`"),
+                        \DB::raw("(CASE WHEN orders.is_refunded = 1 THEN 'YES' ELSE 'NO' END) AS \'orders.is_refunded\'"),
+                        \DB::raw("(CASE WHEN orders.is_partially_refunded = 1 THEN 'YES' ELSE 'NO' END) AS \'orders.is_partially_refunded\'"),
                         'orders.amount_refunded',
                         'orders.created_at',
                     ])->get();

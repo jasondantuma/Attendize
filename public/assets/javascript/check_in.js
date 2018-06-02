@@ -108,9 +108,9 @@ var checkinApp = new Vue({
             }
 
             qrcode.callback = this.QrCheckin;
-            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-            navigator.getUserMedia({video: true, audio: false}, function (stream) {
+            navigator.mediaDevices.getUserMedia({video: true, audio: false})
+                .then(function (stream) {
 
                 that.stream = stream;
 
@@ -122,7 +122,10 @@ var checkinApp = new Vue({
 
                 that.videoElement.play();
 
-            }, function () { /* error*/
+            }).catch(function (error) { /* error*/
+                this.closeScanner()
+                console.error(error);
+
             });
 
             this.isInit = true;
