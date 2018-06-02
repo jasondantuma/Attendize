@@ -123,9 +123,8 @@ var checkinApp = new Vue({
                 that.videoElement.play();
 
             }).catch(function (error) { /* error*/
-                this.closeScanner()
                 console.error(error);
-
+                that.closeScanner();
             });
 
             this.isInit = true;
