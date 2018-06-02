@@ -114,13 +114,10 @@ var checkinApp = new Vue({
 
                 that.stream = stream;
 
-                if (window.webkitURL) {
-                    that.videoElement.src = window.webkitURL.createObjectURL(stream);
-                } else {
-                    that.videoElement.mozSrcObject = stream;
+                that.videoElement.srcObject = stream;
+                that.videoElement.onloadedmetadata = function () {
+                    that.videoElement.play();
                 }
-
-                that.videoElement.play();
 
             }).catch(function (error) { /* error*/
                 console.error(error);
