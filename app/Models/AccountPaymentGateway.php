@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Crypt;
 
 
 class AccountPaymentGateway extends MyBaseModel
@@ -25,7 +27,8 @@ class AccountPaymentGateway extends MyBaseModel
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function account() {
+    public function account()
+    {
         return $this->belongsTo(\App\Models\Account::class);
     }
 
@@ -44,11 +47,17 @@ class AccountPaymentGateway extends MyBaseModel
      *
      * @return mixed
      */
-    public function getConfigAttribute($value) {
-        return json_decode($value, true);
+    public function getConfigAttribute($value)
+    {
+        try {
+            return json_decode(Crypt::decrypt($value), true);
+        } catch (DecryptException $e) {
+            return $value;
+        }
     }
 
-    public function setConfigAttribute($value) {
-        $this->attributes['config'] = json_encode($value);
+    public function setConfigAttribute($value)
+    {
+        $this->attributes['config'] = Crypt::encrypt(json_encode($value));
     }
 }

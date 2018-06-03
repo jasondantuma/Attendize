@@ -28,6 +28,14 @@
                             </td>
                         </tr>
                         @endforeach
+                        @if($total_booking_fee != 0)
+                            <tr>
+                                <td class="pl0"><b>Booking Fee</b></td>
+                                <td style="text-align: right;">
+                                    {{ money($total_booking_fee, $event->currency) }}
+                                </td>
+                            </tr>
+                        @endif
                     </table>
                 </div>
                 @if($order_total > 0)

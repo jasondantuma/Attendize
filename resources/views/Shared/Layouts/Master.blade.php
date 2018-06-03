@@ -12,7 +12,7 @@
     -->
     <title>
         @section('title')
-            Attendize ::
+            {{ env('APP_NAME', 'Attendize')}} ::
         @show
     </title>
 

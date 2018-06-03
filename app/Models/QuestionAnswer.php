@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
+
 class QuestionAnswer extends MyBaseModel
 {
 
@@ -39,4 +42,15 @@ class QuestionAnswer extends MyBaseModel
         return $this->belongsTo(\App\Models\Attendee::class);
     }
 
+    public function getAnswerTextAttribute($value) {
+        try {
+            return Crypt::decrypt($value);
+        } catch (DecryptException $e) {
+            return $value;
+        }
+    }
+
+    public function setAnswerTextAttribute($value) {
+        return $this->attributes['answer_text'] = Crypt::encrypt($value);
+    }
 }
